@@ -1,0 +1,23 @@
+/* Tailwind */
+@import "tailwindcss";
+
+/* enable WebKit blur for Safari */
+.cdk-overlay-backdrop {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+button,
+select,
+option,
+input {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+option:disabled,
+input:disabled {
+  cursor: default;
+}

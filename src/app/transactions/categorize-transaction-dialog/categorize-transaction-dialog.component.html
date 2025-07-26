@@ -1,0 +1,57 @@
+<!-- header -->
+<div class="bg-sky-500 text-center text-white px-6 py-4 rounded-t-lg">
+  <h2 class="text-lg font-medium">Choose category</h2>
+</div>
+
+<mat-dialog-content class="bg-white px-6 py-4 space-y-4">
+  <!-- multi vs single -->
+  <p class="text-center text-sm text-gray-600">
+    You have selected
+    <span class="font-semibold">{{ data.ids?.length || 1 }}</span>
+    transaction{{ (data.ids?.length || 1) > 1 ? 's' : '' }}
+    for {{ data.ids?.length > 1 ? 'multiple ' : '' }}categorization
+  </p>
+
+  <!-- Category -->
+  <div>
+    <label for="category" class="block text-sm font-medium text-gray-700 mb-1">
+      Choose category
+    </label>
+    <select id="category" [(ngModel)]="selectedCategory" (ngModelChange)="filterSubcategories()"
+      class="w-full bg-sky-400 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <option [ngValue]="null">–</option>
+      <option *ngFor="let cat of categoriesWithoutParent" [ngValue]="cat">
+        {{ cat.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Subcategory -->
+  <div>
+    <label for="subcategory" class="block text-sm font-medium text-gray-700 mb-1">
+      Choose subcategory (optional)
+    </label>
+    <select id="subcategory" [(ngModel)]="selectedSubcategory"
+      class="w-full bg-sky-300 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <option [ngValue]="null">None</option>
+      <option *ngFor="let sub of subcategories" [ngValue]="sub">
+        {{ sub.name }}
+      </option>
+    </select>
+  </div>
+</mat-dialog-content>
+
+<!-- footer buttons -->
+<div class="flex justify-center gap-2 px-6 py-3 bg-gray-100 rounded-b-lg">
+  <!-- Apply in DOM first, but visually pushed right with order-last -->
+  <button (click)="apply()" [disabled]="!selectedCategory" class="order-last px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+    Apply
+  </button>
+
+  <!-- Cancel in DOM second, visually pulled left with order-first -->
+  <button (click)="dialogRef.close()" class="order-first px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500
+           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+    Cancel
+  </button>
+</div>

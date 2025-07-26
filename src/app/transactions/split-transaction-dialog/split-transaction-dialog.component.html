@@ -1,0 +1,79 @@
+<!-- header -->
+<div class="bg-sky-500 text-white text-center px-6 py-4 rounded-t-lg">
+    <h2 class="text-lg font-medium">Split transaction</h2>
+</div>
+
+<mat-dialog-content class="bg-white px-6 py-4 space-y-4">
+    <p class="text-center text-sm text-gray-600">
+        Please split the transaction into categories:
+    </p>
+
+    <form #f="ngForm">
+        <div *ngFor="let row of splits; let i = index" class="space-y-2 border-b pb-2 mb-2">
+            <div class="flex items-center justify-between">
+                <span class="font-medium">Split {{ i + 1 }}</span>
+                <button type="button" (click)="removeSplit(i)" *ngIf="splits.length > 2"
+                    class="text-red-500 hover:text-red-700">
+                    &minus;
+                </button>
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select [(ngModel)]="row.category" name="cat{{ i }}" (ngModelChange)="onCategoryChange(i)" required
+                    class="w-full bg-sky-400 text-white rounded p-2 focus:ring-2 focus:ring-blue-400">
+                    <option [ngValue]="null">Choose category</option>
+                    <option *ngFor="let c of categories" [ngValue]="c">
+                        {{ c.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Subcategory -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Subcategory (optional)</label>
+                <select [(ngModel)]="row.subcategory" name="sub{{ i }}"
+                    class="w-full bg-sky-300 text-white rounded p-2 focus:ring-2 focus:ring-blue-400">
+                    <option [ngValue]="null">None</option>
+                    <option *ngFor="let sc of row.subcategories" [ngValue]="sc">
+                        {{ sc.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Amount -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Amount for this split</label>
+                <input type="number" [(ngModel)]="row.amount" name="amt{{ i }}" min="0" required
+                    class="w-full bg-white border rounded p-2 focus:ring-2 focus:ring-blue-400" />
+            </div>
+        </div>
+    </form>
+
+    <button type="button" (click)="addSplit()" class="flex items-center text-blue-500 hover:text-blue-700">
+        <span class="text-2xl mr-1">＋</span> Add new split
+    </button>
+
+    <p class="text-sm text-gray-600">
+        Total entered:
+        <span [ngClass]="sumMatches() ? 'text-green-600' : 'text-red-600'">
+            {{ totalSplits() | number:'1.2-2' }}
+        </span>
+        / {{ data.amount | number:'1.2-2' }}
+    </p>
+</mat-dialog-content>
+
+<div class="flex justify-center gap-6 px-6 py-3 bg-gray-100 rounded-b-lg">
+    <!-- Apply visually on the right -->
+    <button mat-raised-button (click)="apply()" [disabled]="!sumMatches() || !formValid()"
+        class="order-last px-4 py-2 rounded bg-green-600 text-white disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+        Apply
+    </button>
+
+    <!-- Cancel visually on the left -->
+    <button mat-button (click)="dialogRef.close()"
+        class="order-first px-4 py-2 rounded bg-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+        Cancel
+    </button>
+</div>

@@ -1,0 +1,5 @@
+<div *ngIf="loading" class="text-center p-3">Loading...</div>
+
+<div *ngIf="!loading" class="chart-wrapper p-3">
+  <echarts #echartsRef class="treemap-echart" [options]="chartOption" [autoResize]="true"></echarts>
+</div>
