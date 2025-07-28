@@ -1,5 +1,56 @@
-<div *ngIf="loading" class="text-center p-3">Loading...</div>
+<div class="flex flex-col flex-col-reverse lg:flex-row gap-3 p-4">
 
-<div *ngIf="!loading" class="chart-wrapper p-3">
-  <echarts #echartsRef class="treemap-echart" [options]="chartOption" [autoResize]="true"></echarts>
+  <!-- Chart panel (2/3) -->
+  <div class="w-full lg:w-2/3 space-y-4">
+
+    <!-- Back button -->
+    <div class="flex justify-end" *ngIf="currentCatcode">
+      <button mat-button (click)="goBack()" class="text-sm mb-1">
+        ← Back
+      </button>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="text-center p-3">Loading…</div>
+
+    <!-- No-data state -->
+    <div *ngIf="!loading && !hasData" class="text-center p-3 text-gray-500">
+      No data
+    </div>
+
+    <!-- Chart itself (only when data) -->
+    <div *ngIf="!loading && hasData" class="chart-wrapper p-3 h-64 sm:h-80 lg:h-96">
+      <echarts class="treemap-echart" [options]="chartOption" (chartClick)="onChartClick($event)" [autoResize]="true">
+      </echarts>
+    </div>
+  </div>
+
+  <!-- Filters panel (1/3) -->
+  <div class="w-full lg:w-1/3" [class.hidden]="!showFilters" [class.lg:block]="true">
+    <div class="p-4 space-y-4">
+
+      <div class="uppercase text-xs font-bold text-gray-500 border-b-2 border-sky-500 pb-1 mb-3">
+        Period
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold uppercase mb-1">From</label>
+          <input type="date" [formControl]="startDate"
+            class="w-full bg-sky-500 text-white px-3 py-1.5 rounded focus:ring-sky-500" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase mb-1">To</label>
+          <input type="date" [formControl]="endDate"
+            class="w-full bg-sky-500 text-white px-3 py-1.5 rounded focus:ring-sky-500" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <button (click)="onFilter()" class="w-full bg-green-600 text-white py-1.5 rounded hover:bg-green-700">
+          Apply Filters
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

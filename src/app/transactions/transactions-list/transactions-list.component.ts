@@ -55,9 +55,11 @@ export class TransactionsListComponent implements OnInit {
   selectedKind = '';
   fromDate: string | null = null;
   toDate: string | null = null;
-  pageSize = 20;
+  pageSize = 10;
   pageNumber = 1;
   totalItems = 0;
+  sortBy = "date";
+  sortOrder = "desc";
 
   kindLabels: Record<string, string> = {
     dep: 'Deposit',
@@ -82,6 +84,7 @@ export class TransactionsListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   showBulkCategorize = false;
+  showFilters = true; // Show filters by default on large screens, toggle on small
 
   constructor(
     private transactionsService: TransactionsService,
@@ -103,8 +106,10 @@ export class TransactionsListComponent implements OnInit {
 
   private fetchTransactions(): void {
     const params: any = {
-      'page-number': this.pageNumber,
-      'page-size': this.pageSize
+      'page': this.pageNumber,
+      'page-size': this.pageSize,
+      'sort-by': this.sortBy,
+      'sort-order': this.sortOrder
     };
     if (this.selectedKind) {
       params['kind'] = this.selectedKind;
@@ -195,6 +200,10 @@ export class TransactionsListComponent implements OnInit {
     if (!this.showBulkCategorize) {
       this.transactions.forEach(t => t.selected = false);
     }
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
   }
 
   anySelected(): boolean {

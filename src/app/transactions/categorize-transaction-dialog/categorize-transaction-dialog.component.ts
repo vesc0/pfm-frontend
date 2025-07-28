@@ -57,6 +57,7 @@ export class CategorizeTransactionDialogComponent implements OnInit {
     if (!this.selectedCategory) {
       this.subcategories = [];
       this.selectedSubcategory = null;
+      this.selectedCategory = null;
       return;
     }
     this.subcategories = this.categories.filter(

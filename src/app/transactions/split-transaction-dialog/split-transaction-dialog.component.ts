@@ -6,10 +6,10 @@ import { CategoriesService, Category } from '../../services/categories.service';
 import { TransactionsService } from '../../services/transactions.service';
 
 interface SplitRow {
-  category?: Category;
-  subcategory?: Category;
+  category: Category | null;
+  subcategory: Category | null;
   subcategories: Category[];
-  amount?: number;
+  amount: number | null;
 }
 
 @Component({
@@ -38,7 +38,12 @@ export class SplitTransactionDialogComponent implements OnInit {
   }
 
   private createRow(): SplitRow {
-    return { subcategories: [], amount: 0 };
+    return {
+      category: null,
+      subcategory: null,
+      subcategories: [],
+      amount: null
+    };
   }
 
   onCategoryChange(i: number) {
@@ -51,7 +56,7 @@ export class SplitTransactionDialogComponent implements OnInit {
         s => s === this.splits[i].subcategory
       )
     ) {
-      this.splits[i].subcategory = undefined;
+      this.splits[i].subcategory = null;
     }
   }
 
