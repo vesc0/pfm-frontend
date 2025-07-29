@@ -35,13 +35,13 @@
 
       <div class="space-y-3">
         <div>
-          <label class="block text-xs font-semibold uppercase mb-1">From</label>
-          <input type="date" [formControl]="startDate"
+          <label for="startDate" class="block text-xs font-semibold uppercase mb-1">From</label>
+          <input type="date" id="startDate" name="startDate" [formControl]="startDate"
             class="w-full bg-sky-500 text-white px-3 py-1.5 rounded focus:ring-sky-500" />
         </div>
         <div>
-          <label class="block text-xs font-semibold uppercase mb-1">To</label>
-          <input type="date" [formControl]="endDate"
+          <label for="endDate" class="block text-xs font-semibold uppercase mb-1">To</label>
+          <input type="date" id="endDate" name="endDate" [formControl]="endDate"
             class="w-full bg-sky-500 text-white px-3 py-1.5 rounded focus:ring-sky-500" />
         </div>
       </div>
