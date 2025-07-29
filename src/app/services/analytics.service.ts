@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators';
 
 // shape as returned by API
 interface ApiGroup {
-  'cat-code': string;
+  catcode: string;
   amount: number;
   count: number;
 }
@@ -29,17 +29,17 @@ export class AnalyticsService {
   getSpendingsByCategory(
     startDate?: string,
     endDate?: string,
-    catcode?: string
+    catCode?: string
   ): Observable<SpendingGroup[]> {
     let params = new HttpParams();
     if (startDate) { params = params.set('start-date', startDate); }
     if (endDate) { params = params.set('end-date', endDate); }
-    if (catcode) { params = params.set('catcode', catcode); }
+    if (catCode) { params = params.set('catcode', catCode); }
 
     return this.http.get<ApiResponse>(this.apiUrl, { params }).pipe(
       map(resp =>
         resp.groups.map(g => ({
-          catCode: g['cat-code'],
+          catCode: g.catcode,
           amount: g.amount,
           count: g.count
         }))

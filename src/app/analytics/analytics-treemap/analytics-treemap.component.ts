@@ -29,9 +29,9 @@ import { CategoriesService, Category } from '../../services/categories.service';
 })
 export class AnalyticsTreemapComponent implements OnInit {
   chartOption: any = null;
-  loading: boolean = true;
-  hasData: boolean = false;
-  currentCatcode?: string;
+  loading = true;
+  hasData = false;
+  currentCatCode?: string;
 
   startDate = new FormControl<string | null>(null);
   endDate = new FormControl<string | null>(null);
@@ -44,60 +44,49 @@ export class AnalyticsTreemapComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.categoriesSvc.getCategories()
-      .subscribe(cats => {
-        this.allCategories = cats;
-        this.load();
-      });
+    this.categoriesSvc.getCategories().subscribe(cats => {
+      this.allCategories = cats;
+      this.load();
+    });
   }
 
-  load(catcode?: string): void {
-    this.currentCatcode = catcode;
+  load(catCode?: string): void {
+    this.currentCatCode = catCode;
     this.loading = true;
 
     const sd: string | undefined = this.startDate.value ?? undefined;
     const ed: string | undefined = this.endDate.value ?? undefined;
 
-    this.analytics.getSpendingsByCategory(sd, ed)
+    this.analytics.getSpendingsByCategory(sd, ed, catCode)
       .subscribe((groups: SpendingGroup[]) => {
-        const levelCats = this.allCategories.filter(c =>
-          catcode ? c.parentCode === catcode : c.parentCode == null
-        );
+        const data = groups
+          .map(g => {
+            const category = this.allCategories.find(c => c.code === g.catCode);
+            return {
+              rawCode: g.catCode,
+              name: category?.name ?? g.catCode,
+              value: g.amount
+            };
+          })
+          .filter(d => d.value > 0);
 
-        // Compute raw nodes then filter out zero-value entries
-        const rawData = levelCats.map((c: Category) => {
-          const descendants = this.getDescendantCodes(c.code);
-          const codesToSum = [c.code, ...descendants];
-          const total = codesToSum.reduce((sum, code) => {
-            const g = groups.find(g => g.catCode === code);
-            return sum + (g?.amount ?? 0);
-          }, 0);
-          return { rawCode: c.code, name: c.name, value: total };
-        });
-
-        const data = rawData.filter(d => d.value > 0);
         this.hasData = data.length > 0;
 
-        if (this.hasData) {
-          this.chartOption = {
-            tooltip: {
-              trigger: 'item',
-              formatter: (info: any) => `${info.name}: ${info.value.toFixed(2)}`
+        this.chartOption = this.hasData ? {
+          tooltip: {
+            trigger: 'item',
+            formatter: (info: any) => `${info.name}: ${info.value.toFixed(2)}`
+          },
+          series: [{
+            type: 'treemap',
+            nodeClick: false,
+            label: {
+              show: true,
+              formatter: (info: any) => `${info.name}\n${info.value.toFixed(2)}`
             },
-            series: [{
-              type: 'treemap',
-              nodeClick: false,
-              label: {
-                show: true,
-                formatter: (info: any) =>
-                  `${info.name}\n${info.value.toFixed(2)}`
-              },
-              data
-            }]
-          };
-        } else {
-          this.chartOption = null;
-        }
+            data
+          }]
+        } : null;
 
         this.loading = false;
       });
@@ -105,26 +94,23 @@ export class AnalyticsTreemapComponent implements OnInit {
 
   onChartClick(params: any): void {
     const code = params.data?.rawCode;
-    if (code) this.load(code);
+    if (code) {
+      this.load(code);
+    }
   }
 
   goBack(): void {
-    if (!this.currentCatcode) return;
-    const parent = this.allCategories.find(c => c.code === this.currentCatcode)?.parentCode;
-    this.load(parent || undefined);
-  }
-
-  private getDescendantCodes(code: string): string[] {
-    const direct = this.allCategories
-      .filter(c => c.parentCode === code)
-      .map(c => c.code);
-    return direct.flatMap(child => [child, ...this.getDescendantCodes(child)]);
+    if (!this.currentCatCode) return;
+    const parent = this.allCategories.find(c => c.code === this.currentCatCode)?.parentCode;
+    this.load(parent ?? undefined);
   }
 
   onFilter(): void {
-    this.load(this.currentCatcode);
+    this.load(this.currentCatCode);
   }
 
   showFilters = true;
-  toggleFilters() { this.showFilters = !this.showFilters; }
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
 }

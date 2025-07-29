@@ -42,9 +42,7 @@ interface Transaction {
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatPaginatorModule,
-    CategorizeTransactionDialogComponent,
-    SplitTransactionDialogComponent
+    MatPaginatorModule
   ],
   templateUrl: './transactions-list.component.html',
   styleUrls: ['./transactions-list.component.scss']
