@@ -24,7 +24,7 @@
                 <select [(ngModel)]="row.category" id="cat{{ i }}" name="cat{{ i }}" (ngModelChange)="onCategoryChange(i)" required
                     class="w-full bg-sky-400 text-white rounded p-2 focus:ring-2 focus:ring-blue-400">
                     <option [ngValue]="null">Choose category</option>
-                    <option *ngFor="let c of categories" [ngValue]="c">
+                    <option *ngFor="let c of categoriesWithoutParent" [ngValue]="c">
                         {{ c.name }}
                     </option>
                 </select>

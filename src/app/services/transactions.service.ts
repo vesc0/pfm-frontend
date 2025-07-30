@@ -17,12 +17,12 @@ export class TransactionsService {
   }
 
   categorizeMultiple(ids: number[], catCode: string): Observable<any> {
-    const calls = ids.map(id => this.http.post(`${this.apiUrl}/transactions/${id}/categorize`, { 'cat-code': catCode }));
+    const calls = ids.map(id => this.http.post(`${this.apiUrl}/transactions/${id}/categorize`, { 'catcode': catCode }));
     return forkJoin(calls);
   }
 
-  splitTransaction(id: number, splits: Array<{ 'cat-code': string; 'sub-cat-code'?: string; amount: number }>): Observable<any> {
-    return this.http.post(`${this.apiUrl}/transactions/${id}/split`, splits);
+  splitTransaction(id: number, splits: Array<{ 'catcode': string; amount: number }>): Observable<any> {
+    return this.http.post(`${this.apiUrl}/transactions/${id}/split`, { 'splits': splits }, { responseType: 'text' });
   }
 
 }

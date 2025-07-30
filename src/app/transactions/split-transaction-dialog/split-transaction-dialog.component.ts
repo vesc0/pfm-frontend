@@ -80,15 +80,18 @@ export class SplitTransactionDialogComponent implements OnInit {
     return this.splits.every(r => r.category && r.amount! > 0);
   }
 
+  get categoriesWithoutParent(): Category[] {
+    return this.categories.filter(cat => !cat.parentCode);
+  }
+
   apply() {
     const payload = this.splits.map(r => {
       const obj: any = {
         amount: r.amount!,
-        'cat-code': r.category!.code
+        // if subcategory is selected, use its code, else use category code
+        catcode: r.subcategory?.code ?? r.category!.code
       };
-      if (r.subcategory) {
-        obj['sub-cat-code'] = r.subcategory.code;
-      }
+
       return obj;
     });
 

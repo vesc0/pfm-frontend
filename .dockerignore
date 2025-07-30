@@ -1,0 +1,21 @@
+# Node/npm artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Angular build cache & output
+.angular/
+dist/
+
+# IDE / editor dirs
+.vscode/
+.idea/
+
+# OS junk
+.DS_Store
+
+# Git metadata
+.git/
+.gitignore
+

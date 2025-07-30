@@ -5,7 +5,7 @@
 
     <!-- Filter toggle button for small devices -->
     <div class="lg:hidden flex justify-center" [class.mb-2]="showFilters" [class.mb-4]="!showFilters">
-      <button (click)="toggleFilters()" 
+      <button (click)="toggleFilters()"
         class="bg-gray-500 text-white px-3 py-1 rounded-lg text-xs font-medium hover:bg-gray-600 flex items-center gap-2">
         <mat-icon class="text-sm">{{ showFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
         {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
@@ -136,7 +136,7 @@
       <div class="mt-4 uppercase text-xs font-bold text-gray-500 border-b-2 border-sky-500 pb-1 mb-3">
         Transaction Kind
       </div>
-      <select id="transactionKind" name="transactionKind" [(ngModel)]="selectedKind"
+      <select id="transactionKind" name="transactionKind" [(ngModel)]="selectedKind" multiple
         class="w-full bg-sky-500 text-white px-3 py-1.5 rounded focus:ring-sky-500 mb-4">
         <option value="">All</option>
         <option *ngFor="let k of transactionKinds" [value]="k">{{ kindLabels[k] || k }}</option>

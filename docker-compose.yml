@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    container_name: pfm_ui
+    ports:
+      - "4200:80"

@@ -26,7 +26,6 @@ interface Transaction {
   currency: string;
   mcc?: number;
   kind: string;
-  beneficiaryAvatar?: string;
   catCode?: string;
   category?: Category; // looked up from CategoriesService
   splits: Split[];
@@ -103,14 +102,16 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private fetchTransactions(): void {
+
     const params: any = {
       'page': this.pageNumber,
       'page-size': this.pageSize,
       'sort-by': this.sortBy,
       'sort-order': this.sortOrder
     };
+    //ime parametra
     if (this.selectedKind) {
-      params['kind'] = this.selectedKind;
+      params['transaction-kind'] = this.selectedKind;
     }
     if (this.fromDate) {
       params['start-date'] = new Date(this.fromDate).toISOString();
@@ -124,9 +125,9 @@ export class TransactionsListComponent implements OnInit {
         this.totalItems = resp['total-count'] ?? (resp.items?.length || 0);
         const items = resp.items ?? resp;
         this.transactions = items.map((tx: any) => {
-          const code = tx['cat-code'] as string | undefined;
+          const code = tx['catcode'] as string | undefined;
           const splits: Split[] = (tx['splits'] as any[] || []).map(s => {
-            const splitCode = s.catCode ?? s['cat-code'];
+            const splitCode = s.catCode ?? s['catcode'];
             return {
               amount: s.amount,
               catCode: splitCode,
