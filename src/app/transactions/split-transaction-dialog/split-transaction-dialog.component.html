@@ -1,6 +1,13 @@
 <!-- header -->
 <div class="bg-sky-500 text-white text-center px-6 py-4 rounded-t-lg">
     <h2 class="text-lg font-medium">Split transaction</h2>
+    <p class="text-sm text-gray-200">
+        Total entered:
+        <span [ngClass]="sumMatches() ? 'text-green-400 font-bold' : 'text-red-600 font-bold'">
+            {{ totalSplits() | number:'1.2-2' }}
+        </span>
+        / {{ data.amount | number:'1.2-2' }} (left: {{ data.amount - totalSplits() | number:'1.2-2' }})
+    </p>
 </div>
 
 <mat-dialog-content class="bg-white px-6 py-4 space-y-4">
@@ -55,13 +62,6 @@
         <span class="text-2xl mr-1">＋</span> Add new split
     </button>
 
-    <p class="text-sm text-gray-600">
-        Total entered:
-        <span [ngClass]="sumMatches() ? 'text-green-600' : 'text-red-600'">
-            {{ totalSplits() | number:'1.2-2' }}
-        </span>
-        / {{ data.amount | number:'1.2-2' }}
-    </p>
 </mat-dialog-content>
 
 <div class="flex justify-center gap-3 px-6 py-3 bg-gray-100 rounded-b-lg">

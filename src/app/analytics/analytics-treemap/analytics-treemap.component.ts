@@ -109,6 +109,12 @@ export class AnalyticsTreemapComponent implements OnInit {
     this.load(this.currentCatCode);
   }
 
+  onFilterClear(): void {
+    this.startDate.setValue(null);
+    this.endDate.setValue(null);
+    this.load(this.currentCatCode);
+  }
+
   showFilters = true;
   toggleFilters(): void {
     this.showFilters = !this.showFilters;

@@ -49,7 +49,7 @@ interface Transaction {
 export class TransactionsListComponent implements OnInit {
   transactions: Transaction[] = [];
   transactionKinds: string[] = [];
-  selectedKind = '';
+  selectedKinds: string[] = []; // Changed from selectedKind to selectedKinds array
   fromDate: string | null = null;
   toDate: string | null = null;
   pageSize = 10;
@@ -82,6 +82,7 @@ export class TransactionsListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   showBulkCategorize = false;
   showFilters = true; // Show filters by default on large screens, toggle on small
+  showKindDropdown = false; // Add this property to control dropdown visibility
 
   constructor(
     private transactionsService: TransactionsService,
@@ -102,16 +103,15 @@ export class TransactionsListComponent implements OnInit {
   }
 
   private fetchTransactions(): void {
-
     const params: any = {
       'page': this.pageNumber,
       'page-size': this.pageSize,
       'sort-by': this.sortBy,
       'sort-order': this.sortOrder
     };
-    //ime parametra
-    if (this.selectedKind) {
-      params['transaction-kind'] = this.selectedKind;
+    
+    if (this.selectedKinds.length > 0) { // Changed condition
+      params['transaction-kind'] = this.selectedKinds.join(','); // Join array with commas
     }
     if (this.fromDate) {
       params['start-date'] = new Date(this.fromDate).toISOString();
@@ -160,7 +160,7 @@ export class TransactionsListComponent implements OnInit {
   }
 
   onFilterClear(): void {
-    this.selectedKind = '';
+    this.selectedKinds = []; // Changed from selectedKind = ''
     this.fromDate = null;
     this.toDate = null;
     this.pageNumber = 1;
@@ -203,6 +203,29 @@ export class TransactionsListComponent implements OnInit {
 
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
+  }
+
+  toggleKindDropdown(): void {
+    this.showKindDropdown = !this.showKindDropdown;
+  }
+
+  onKindToggle(kind: string): void {
+    const index = this.selectedKinds.indexOf(kind);
+    if (index > -1) {
+      this.selectedKinds.splice(index, 1);
+    } else {
+      this.selectedKinds.push(kind);
+    }
+  }
+
+  getKindDisplayText(): string {
+    if (this.selectedKinds.length === 0) {
+      return 'All';
+    } else if (this.selectedKinds.length === 1) {
+      return this.kindLabels[this.selectedKinds[0]] || this.selectedKinds[0];
+    } else {
+      return `${this.selectedKinds.length} selected`;
+    }
   }
 
   anySelected(): boolean {
