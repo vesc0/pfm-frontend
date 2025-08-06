@@ -40,7 +40,7 @@
     </div>
 
     <!-- Cards -->
-    <div *ngFor="let tx of transactions"
+    <div *ngFor="let tx of transactions; trackBy: trackByTransactionId"
       class="flex items-start bg-white/80 backdrop-blur rounded-2xl p-4 space-x-4 sm:pl-10 sm:pr-10 min-h-32">
       <!-- 1) Bulk checkbox -->
       <div *ngIf="showBulkCategorize" class="flex-shrink-0">

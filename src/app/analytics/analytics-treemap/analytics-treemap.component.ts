@@ -8,14 +8,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { AnalyticsService, SpendingGroup } from '../../services/analytics.service';
-import { CategoriesService, Category } from '../../services/categories.service';
+import { AnalyticsService } from '../../services/analytics.service';
+import { CategoriesService } from '../../services/categories.service';
+import { Category } from '../../models/category.model';
+import { AnalyticsFilters, ChartDataItem } from '../../models/analytics.model';
 
 @Component({
   selector: 'app-analytics-treemap',
   standalone: true,
-  imports: [
-    CommonModule,
+  imports: [CommonModule,
     NgxEchartsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -37,11 +38,9 @@ export class AnalyticsTreemapComponent implements OnInit {
   endDate = new FormControl<string | null>(null);
 
   private allCategories: Category[] = [];
+  showFilters = true;
 
-  constructor(
-    private analytics: AnalyticsService,
-    private categoriesSvc: CategoriesService
-  ) { }
+  constructor(private analytics: AnalyticsService, private categoriesSvc: CategoriesService) { }
 
   ngOnInit(): void {
     this.categoriesSvc.getCategories().subscribe(cats => {
@@ -54,49 +53,23 @@ export class AnalyticsTreemapComponent implements OnInit {
     this.currentCatCode = catCode;
     this.loading = true;
 
-    const sd: string | undefined = this.startDate.value ?? undefined;
-    const ed: string | undefined = this.endDate.value ?? undefined;
+    const filters: AnalyticsFilters = {
+      startDate: this.startDate.value ?? undefined,
+      endDate: this.endDate.value ?? undefined,
+      categoryCode: catCode
+    };
 
-    this.analytics.getSpendingsByCategory(sd, ed, catCode)
-      .subscribe((groups: SpendingGroup[]) => {
-        const data = groups
-          .map(g => {
-            const category = this.allCategories.find(c => c.code === g.catCode);
-            return {
-              rawCode: g.catCode,
-              name: category?.name ?? g.catCode,
-              value: g.amount
-            };
-          })
-          .filter(d => d.value > 0);
-
+    this.analytics.getSpendingsForChart(filters)
+      .subscribe((data: ChartDataItem[]) => {
         this.hasData = data.length > 0;
-
-        this.chartOption = this.hasData ? {
-          tooltip: {
-            trigger: 'item',
-            formatter: (info: any) => `${info.name}: ${info.value.toFixed(2)}`
-          },
-          series: [{
-            type: 'treemap',
-            nodeClick: false,
-            label: {
-              show: true,
-              formatter: (info: any) => `${info.name}\n${info.value.toFixed(2)}`
-            },
-            data
-          }]
-        } : null;
-
+        this.chartOption = this.analytics.generateChartOptions(data);
         this.loading = false;
       });
   }
 
   onChartClick(params: any): void {
     const code = params.data?.rawCode;
-    if (code) {
-      this.load(code);
-    }
+    if (code) { this.load(code); }
   }
 
   goBack(): void {
@@ -115,8 +88,8 @@ export class AnalyticsTreemapComponent implements OnInit {
     this.load(this.currentCatCode);
   }
 
-  showFilters = true;
   toggleFilters(): void {
     this.showFilters = !this.showFilters;
   }
+
 }

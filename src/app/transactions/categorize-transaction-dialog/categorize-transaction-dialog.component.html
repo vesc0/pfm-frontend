@@ -20,9 +20,7 @@
     <select id="category" [(ngModel)]="selectedCategory" (ngModelChange)="filterSubcategories()"
       class="w-full bg-sky-400 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <option [ngValue]="null">Select category</option>
-      <option *ngFor="let cat of categoriesWithoutParent" [ngValue]="cat">
-        {{ cat.name }}
-      </option>
+      <option *ngFor="let cat of categoriesWithoutParent" [ngValue]="cat">{{ cat.name }}</option>
     </select>
   </div>
 
@@ -34,24 +32,23 @@
     <select id="subcategory" [(ngModel)]="selectedSubcategory"
       class="w-full bg-sky-300 text-white rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
       <option [ngValue]="null">None</option>
-      <option *ngFor="let sub of subcategories" [ngValue]="sub">
-        {{ sub.name }}
-      </option>
+      <option *ngFor="let sub of subcategories" [ngValue]="sub">{{ sub.name }}</option>
     </select>
   </div>
+
 </mat-dialog-content>
 
 <!-- footer buttons -->
 <div class="flex justify-center gap-3 px-6 py-3 bg-gray-100 rounded-b-lg">
   <!-- Apply in DOM first, but visually pushed right with order-last -->
-  <button (click)="apply()" [disabled]="!selectedCategory" class="order-last px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50
-           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
+  <button (click)="apply()" [disabled]="!selectedCategory"
+    class="order-last px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-400">
     Apply
   </button>
 
   <!-- Cancel in DOM second, visually pulled left with order-first -->
-  <button (click)="dialogRef.close()" class="order-first px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500
-           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
+  <button (click)="dialogRef.close()"
+    class="order-first px-4 py-2 rounded bg-gray-400 text-white hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400">
     Cancel
   </button>
 </div>

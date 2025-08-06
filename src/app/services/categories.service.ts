@@ -1,26 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
-
-export interface Category {
-  code: string;
-  name: string;
-  parentCode: string | null;
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable, map, shareReplay } from 'rxjs';
+import { Category, CategoryResponse } from '../models/category.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CategoriesService {
-  private apiUrl = 'http://localhost:5138/categories';
+  private apiUrl = `${environment.apiUrl}/categories`;
+  private cachedCategories$: Observable<Category[]> | null = null;
 
   constructor(private http: HttpClient) { }
 
   getCategories(parentCode?: string): Observable<Category[]> {
-    let params = new HttpParams();
-    if (parentCode) {
-      params = params.set('parent-id', parentCode);
-    }
+    if (!this.cachedCategories$) { this.cachedCategories$ = this.fetchCategories().pipe(shareReplay(1)); }
+
+    return this.cachedCategories$.pipe(
+      map(categories => parentCode
+        ? categories.filter(cat => cat.parentCode === parentCode)
+        : categories
+      )
+    );
+  }
+
+  private fetchCategories(): Observable<Category[]> {
     return this.http
-      .get<{ items: any[] }>(this.apiUrl, { params })
+      .get<CategoryResponse>(this.apiUrl)
       .pipe(
         map(resp =>
           resp.items.map(item => ({
@@ -30,6 +34,18 @@ export class CategoriesService {
           }))
         )
       );
-
   }
+
+  getCategoriesWithoutParent(): Observable<Category[]> {
+    return this.getCategories().pipe(map(cats => cats.filter(cat => !cat.parentCode)));
+  }
+
+  getSubcategories(parentCode: string): Observable<Category[]> {
+    return this.getCategories().pipe(map(cats => cats.filter(cat => cat.parentCode === parentCode)));
+  }
+
+  getCategoryMap(): Observable<Map<string, Category>> {
+    return this.getCategories().pipe(map(categories => new Map(categories.map(c => [c.code, c]))));
+  }
+
 }

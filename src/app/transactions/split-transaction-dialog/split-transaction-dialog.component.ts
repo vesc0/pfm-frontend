@@ -2,15 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { CategoriesService, Category } from '../../services/categories.service';
+import { CategoriesService } from '../../services/categories.service';
 import { TransactionsService } from '../../services/transactions.service';
-
-interface SplitRow {
-  category: Category | null;
-  subcategory: Category | null;
-  subcategories: Category[];
-  amount: number | null;
-}
+import { Category } from '../../models/category.model';
+import { SplitRow } from '../../models/transaction.model';
 
 @Component({
   selector: 'app-split-transaction-dialog',
@@ -85,18 +80,11 @@ export class SplitTransactionDialogComponent implements OnInit {
   }
 
   apply() {
-    const payload = this.splits.map(r => {
-      const obj: any = {
-        amount: r.amount!,
-        // if subcategory is selected, use its code, else use category code
-        catcode: r.subcategory?.code ?? r.category!.code
-      };
-
-      return obj;
-    });
-
+    const payload = this.transactionsService.prepareSplitRequests(this.splits);
+    
     this.transactionsService
       .splitTransaction(this.data.id, payload)
       .subscribe(() => this.dialogRef.close(true));
   }
+  
 }

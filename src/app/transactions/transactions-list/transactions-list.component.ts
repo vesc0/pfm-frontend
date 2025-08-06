@@ -6,50 +6,22 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent, MatPaginator } from '@angular/material/paginator';
 import { TransactionsService } from '../../services/transactions.service';
-import { CategoriesService, Category } from '../../services/categories.service';
+import { CategoriesService } from '../../services/categories.service';
 import { CategorizeTransactionDialogComponent } from '../categorize-transaction-dialog/categorize-transaction-dialog.component';
 import { SplitTransactionDialogComponent } from '../split-transaction-dialog/split-transaction-dialog.component';
-
-interface Split {
-  amount: number;
-  catCode: string;
-  category?: Category;
-}
-
-interface Transaction {
-  id: string;
-  date: string;
-  direction: string;
-  amount: number;
-  beneficiaryName: string;
-  description?: string;
-  currency: string;
-  mcc?: number;
-  kind: string;
-  catCode?: string;
-  category?: Category; // looked up from CategoriesService
-  splits: Split[];
-  selected: boolean;
-}
+import { Transaction, TransactionFilters, TRANSACTION_KINDS } from '../../models/transaction.model';
 
 @Component({
   selector: 'app-transactions-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatPaginatorModule
-  ],
+  imports: [CommonModule, FormsModule, MatIconModule, MatButtonModule, MatDialogModule, MatPaginatorModule],
   templateUrl: './transactions-list.component.html',
   styleUrls: ['./transactions-list.component.scss']
 })
 export class TransactionsListComponent implements OnInit {
   transactions: Transaction[] = [];
   transactionKinds: string[] = [];
-  selectedKinds: string[] = []; // Changed from selectedKind to selectedKinds array
+  selectedKinds: string[] = [];
   fromDate: string | null = null;
   toDate: string | null = null;
   pageSize = 10;
@@ -58,31 +30,12 @@ export class TransactionsListComponent implements OnInit {
   sortBy = "date";
   sortOrder = "desc";
 
-  kindLabels: Record<string, string> = {
-    dep: 'Deposit',
-    wdw: 'Withdrawal',
-    pmt: 'Payment',
-    fee: 'Fee',
-    inc: 'Income',
-    rev: 'Reversal',
-    adj: 'Adjustment',
-    lnd: 'Lending',
-    lnr: 'Loan Repayment',
-    fcx: 'Foreign Exchange',
-    aop: 'Account Opening',
-    acl: 'Account Closing',
-    spl: 'Split',
-    sal: 'Salary'
-  };
-
-  // full list of categories to build names lookup
-  private allCategories: Category[] = [];
-  private categoryMap = new Map<string, Category>();
+  kindLabels = TRANSACTION_KINDS;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   showBulkCategorize = false;
-  showFilters = true; // Show filters by default on large screens, toggle on small
-  showKindDropdown = false; // Add this property to control dropdown visibility
+  showFilters = true;
+  showKindDropdown = false;
 
   constructor(
     private transactionsService: TransactionsService,
@@ -91,66 +44,25 @@ export class TransactionsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // derive kinds from the labels map
     this.transactionKinds = Object.keys(this.kindLabels);
-    // load categories
-    this.categoriesService.getCategories().subscribe(cats => {
-      this.allCategories = cats;
-      this.categoryMap = new Map(cats.map(c => [c.code, c]));
-      // then fetch transactions
-      this.fetchTransactions();
-    });
+    this.fetchTransactions();
   }
 
   private fetchTransactions(): void {
-    const params: any = {
-      'page': this.pageNumber,
-      'page-size': this.pageSize,
-      'sort-by': this.sortBy,
-      'sort-order': this.sortOrder
+    const filters: TransactionFilters = {
+      page: this.pageNumber,
+      pageSize: this.pageSize,
+      sortBy: this.sortBy,
+      sortOrder: this.sortOrder,
+      transactionKinds: this.selectedKinds.length > 0 ? this.selectedKinds : undefined,
+      startDate: this.fromDate || undefined,
+      endDate: this.toDate || undefined
     };
-    
-    if (this.selectedKinds.length > 0) { // Changed condition
-      params['transaction-kind'] = this.selectedKinds.join(','); // Join array with commas
-    }
-    if (this.fromDate) {
-      params['start-date'] = new Date(this.fromDate).toISOString();
-    }
-    if (this.toDate) {
-      params['end-date'] = new Date(this.toDate).toISOString();
-    }
 
-    this.transactionsService.getTransactions(params)
-      .subscribe((resp: any) => {
-        this.totalItems = resp['total-count'] ?? (resp.items?.length || 0);
-        const items = resp.items ?? resp;
-        this.transactions = items.map((tx: any) => {
-          const code = tx['catcode'] as string | undefined;
-          const splits: Split[] = (tx['splits'] as any[] || []).map(s => {
-            const splitCode = s.catCode ?? s['catcode'];
-            return {
-              amount: s.amount,
-              catCode: splitCode,
-              category: this.categoryMap.get(splitCode)
-            };
-          });
-          return {
-            id: tx.id,
-            date: tx.date,
-            direction: tx.direction,
-            amount: tx.amount,
-            beneficiaryName: tx['beneficiary-name'],
-            description: tx.description,
-            currency: tx.currency,
-            mcc: tx.mcc,
-            kind: tx.kind,
-            beneficiaryAvatar: tx['beneficiary-avatar'],
-            catCode: code,
-            category: code ? this.categoryMap.get(code) : undefined,
-            splits,
-            selected: false
-          } as Transaction;
-        });
+    this.transactionsService.getTransactions(filters)
+      .subscribe(result => {
+        this.transactions = result.transactions;
+        this.totalItems = result.totalCount;
       });
   }
 
@@ -160,7 +72,7 @@ export class TransactionsListComponent implements OnInit {
   }
 
   onFilterClear(): void {
-    this.selectedKinds = []; // Changed from selectedKind = ''
+    this.selectedKinds = [];
     this.fromDate = null;
     this.toDate = null;
     this.pageNumber = 1;
@@ -253,4 +165,9 @@ export class TransactionsListComponent implements OnInit {
       }
     });
   }
+
+  trackByTransactionId(index: number, transaction: Transaction): string {
+    return transaction.id;
+  }
+  
 }

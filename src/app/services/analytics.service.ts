@@ -1,49 +1,76 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { SpendingGroup, ApiSpendingResponse, ChartDataItem, AnalyticsFilters } from '../models/analytics.model';
+import { CategoriesService } from './categories.service';
+import { environment } from '../../environments/environment';
 
-// shape as returned by API
-interface ApiGroup {
-  catcode: string;
-  amount: number;
-  count: number;
-}
-interface ApiResponse {
-  groups: ApiGroup[];
-}
-
-// internal shape
-export interface SpendingGroup {
-  catCode: string;
-  amount: number;
-  count: number;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AnalyticsService {
-  private apiUrl = 'http://localhost:5138/spending-analytics';
+  private apiUrl = `${environment.apiUrl}/spending-analytics`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private categoriesService: CategoriesService) { }
 
-  getSpendingsByCategory(
-    startDate?: string,
-    endDate?: string,
-    catCode?: string
-  ): Observable<SpendingGroup[]> {
+  getSpendingsByCategory(filters?: AnalyticsFilters): Observable<SpendingGroup[]> {
     let params = new HttpParams();
-    if (startDate) { params = params.set('start-date', startDate); }
-    if (endDate) { params = params.set('end-date', endDate); }
-    if (catCode) { params = params.set('catcode', catCode); }
 
-    return this.http.get<ApiResponse>(this.apiUrl, { params }).pipe(
-      map(resp =>
-        resp.groups.map(g => ({
-          catCode: g.catcode,
-          amount: g.amount,
-          count: g.count
-        }))
-      )
+    if (filters?.startDate) { params = params.set('start-date', filters.startDate); }
+    if (filters?.endDate) { params = params.set('end-date', filters.endDate); }
+    if (filters?.categoryCode) { params = params.set('catcode', filters.categoryCode); }
+
+    return this.http
+      .get<ApiSpendingResponse>(this.apiUrl, { params })
+      .pipe(
+        map(resp =>
+          resp.groups.map(g => ({
+            catCode: g.catcode,
+            amount: g.amount,
+            count: g.count
+          }))
+        )
+      );
+  }
+
+  getSpendingsForChart(filters?: AnalyticsFilters): Observable<ChartDataItem[]> {
+    return this.categoriesService.getCategories().pipe(
+      switchMap(categories => {
+        return this.getSpendingsByCategory(filters).pipe(
+          map(groups => {
+            return groups.map(g => {
+              const category = categories.find(c => c.code === g.catCode);
+              return {
+                rawCode: g.catCode,
+                name: category?.name ?? g.catCode,
+                value: g.amount
+              };
+            })
+              .filter(d => d.value > 0);
+          })
+        );
+      })
     );
   }
+
+  generateChartOptions(data: ChartDataItem[]): any {
+    if (data.length === 0) { return null; }
+
+    return {
+      tooltip: {
+        trigger: 'item',
+        formatter: (info: any) => `${info.name}: ${info.value.toFixed(2)}`
+      },
+      series: [{
+        type: 'treemap',
+        nodeClick: false,
+        label: {
+          show: true,
+          formatter: (info: any) => `${info.name}\n${info.value.toFixed(2)}`
+        },
+        data
+      }]
+    };
+  }
+  
 }
