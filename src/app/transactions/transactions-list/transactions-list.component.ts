@@ -29,9 +29,7 @@ export class TransactionsListComponent implements OnInit {
   totalItems = 0;
   sortBy = "date";
   sortOrder = "desc";
-
   kindLabels = TRANSACTION_KINDS;
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   showBulkCategorize = false;
   showFilters = true;
@@ -99,7 +97,11 @@ export class TransactionsListComponent implements OnInit {
 
   openSplitDialog(tx: Transaction): void {
     const ref = this.dialog.open(SplitTransactionDialogComponent, {
-      data: { id: Number(tx.id), amount: tx.amount }
+      data: {
+        id: Number(tx.id),
+        amount: tx.amount,
+        existingSplits: tx.splits
+      }
     });
     ref.afterClosed().subscribe(ok => {
       if (ok) this.fetchTransactions();
@@ -169,5 +171,5 @@ export class TransactionsListComponent implements OnInit {
   trackByTransactionId(index: number, transaction: Transaction): string {
     return transaction.id;
   }
-  
+
 }

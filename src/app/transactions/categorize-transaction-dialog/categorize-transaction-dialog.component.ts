@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { CategoriesService } from '../../services/categories.service';
 import { TransactionsService } from '../../services/transactions.service';
+import { NotificationService } from '../../services/notification.service';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +27,8 @@ export class CategorizeTransactionDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<CategorizeTransactionDialogComponent>,
     private categoriesService: CategoriesService,
-    private transactionsService: TransactionsService
+    private transactionsService: TransactionsService,
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit() {
@@ -34,17 +36,11 @@ export class CategorizeTransactionDialogComponent implements OnInit {
       this.categories = cats;
 
       if (this.data.category?.parentCode) {
-        this.selectedCategory = this.categories.find(
-          c => c.code === this.data.category.parentCode
-        ) || null;
+        this.selectedCategory = this.categories.find(c => c.code === this.data.category.parentCode) || null;
         this.filterSubcategories();
-        this.selectedSubcategory = this.categories.find(
-          c => c.code === this.data.category.code
-        ) || null;
+        this.selectedSubcategory = this.categories.find(c => c.code === this.data.category.code) || null;
       } else {
-        this.selectedCategory = this.categories.find(
-          c => c.code === this.data.category?.code
-        ) || null;
+        this.selectedCategory = this.categories.find(c => c.code === this.data.category?.code) || null;
         this.filterSubcategories();
       }
     });
@@ -60,9 +56,7 @@ export class CategorizeTransactionDialogComponent implements OnInit {
       this.selectedSubcategory = null;
       return;
     }
-    this.subcategories = this.categories.filter(
-      cat => cat.parentCode === this.selectedCategory!.code
-    );
+    this.subcategories = this.categories.filter(cat => cat.parentCode === this.selectedCategory!.code);
     if (!this.subcategories.find(s => s.code === this.selectedSubcategory?.code)) {
       this.selectedSubcategory = null;
     }
@@ -75,7 +69,15 @@ export class CategorizeTransactionDialogComponent implements OnInit {
     const ids: number[] = this.data.ids ?? [this.data.id];
     this.transactionsService
       .categorizeMultiple(ids, code)
-      .subscribe(() => this.dialogRef.close(true));
+      .subscribe({
+        next: (response) => {
+          this.notificationService.handleSuccess(response, 'Transaction categorized.');
+          this.dialogRef.close(true);
+        },
+        error: (error) => {
+          this.notificationService.handleHttpError(error, 'An error occurred while categorizing the transaction.');
+        }
+      });
   }
-  
+
 }

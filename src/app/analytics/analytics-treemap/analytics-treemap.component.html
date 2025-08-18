@@ -1,34 +1,40 @@
-<div class="flex flex-col flex-col-reverse lg:flex-row gap-3 p-4">
+<div class="flex flex-col-reverse lg:flex-row p-4 items-start">
 
   <!-- Chart panel (2/3) -->
-  <div class="w-full lg:w-2/3 space-y-4">
+  <div class="w-full lg:w-2/3 space-y-2">
 
-    <!-- Back button -->
-    <div class="flex justify-end" *ngIf="currentCatCode">
-      <button mat-button (click)="goBack()" class="text-sm mb-1">
-        ← Back
-      </button>
+    <div class="relative">
+
+      <div *ngIf="currentCatCode" class="absolute top-0 right-0 z-10">
+        <button mat-button (click)="goBack()" class="text-sm mb-0">
+          ← Back
+        </button>
+      </div>
+
+      <!-- Chart itself (only when data) -->
+      <div *ngIf="!loading && hasData" class="chart-wrapper sm:p-3" [ngClass]="{
+             'h-80': true,               
+             'sm:h-96': true,            
+             'md:h-[350px]': true,       
+             'lg:h-[350px]': true        
+           }">
+        <echarts class="treemap-echart" [options]="chartOption" (chartClick)="onChartClick($event)" [autoResize]="true">
+        </echarts>
+      </div>
+
     </div>
 
-    <!-- Loading state -->
+    <!-- Loading & No-data states -->
     <div *ngIf="loading" class="text-center p-3">Loading…</div>
-
-    <!-- No-data state -->
     <div *ngIf="!loading && !hasData" class="text-center p-3 text-gray-500">
       No data
     </div>
 
-    <!-- Chart itself (only when data) -->
-    <div *ngIf="!loading && hasData" class="chart-wrapper p-3 h-64 sm:h-80 lg:h-96">
-      <echarts class="treemap-echart" [options]="chartOption" (chartClick)="onChartClick($event)" [autoResize]="true">
-      </echarts>
-    </div>
-    
   </div>
 
   <!-- Filters panel (1/3) -->
   <div class="w-full lg:w-1/3" [class.hidden]="!showFilters" [class.lg:block]="true">
-    <div class="pl-10 pr-10 space-y-4">
+    <div class="pl-12 pr-10 space-y-4">
 
       <div class="uppercase text-xs font-bold text-gray-500 border-b-2 border-sky-500 pb-1 mb-3">
         Period

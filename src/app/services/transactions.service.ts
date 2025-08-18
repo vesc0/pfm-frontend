@@ -91,7 +91,7 @@ export class TransactionsService {
   }
 
   splitTransaction(id: number, splits: SplitRequest[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/transactions/${id}/split`, { 'splits': splits }, { responseType: 'text' });
+    return this.http.post(`${this.apiUrl}/transactions/${id}/split`, { 'splits': splits });
   }
 
   prepareSplitRequests(splits: any[]): SplitRequest[] {

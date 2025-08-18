@@ -53,24 +53,50 @@ export class AnalyticsService {
     );
   }
 
-  generateChartOptions(data: ChartDataItem[]): any {
-    if (data.length === 0) { return null; }
-
+  generateChartOptions(items: ChartDataItem[]) {
     return {
       tooltip: {
-        trigger: 'item',
-        formatter: (info: any) => `${info.name}: ${info.value.toFixed(2)}`
+        formatter: (info: any) => {
+          const value = info.data?.value ?? info.value;
+          return `${info.name}<br/>${value}`;
+        }
       },
-      series: [{
-        type: 'treemap',
-        nodeClick: false,
-        label: {
-          show: true,
-          formatter: (info: any) => `${info.name}\n${info.value.toFixed(2)}`
-        },
-        data
-      }]
+      series: [
+        {
+          type: 'treemap',
+          roam: true,
+          nodeClick: false,
+          // Make treemap fill the container properly
+          width: '100%',
+          height: '100%',
+          top: 15,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          // Pass through code so it can be read in chartClick:
+          data: items.map(i => ({ name: i.name, value: i.value, rawCode: i.rawCode })),
+          breadcrumb: { show: false },
+          label: {
+            show: true,
+            formatter: '{b}\n{c}',
+            align: 'center',
+            verticalAlign: 'middle',
+            fontSize: 12,
+            color: '#fff',
+            overflow: 'truncate'
+          },
+          // Borders between tiles:
+          itemStyle: {
+            borderColor: '#ffffff',
+            borderWidth: 2,
+            gapWidth: 2
+          },
+          emphasis: {
+            label: { show: true }
+          }
+        }
+      ]
     };
   }
-  
+
 }

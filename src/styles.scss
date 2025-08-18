@@ -1,7 +1,7 @@
 /* Tailwind */
 @import "tailwindcss";
 
-/* enable WebKit blur for Safari */
+/* Enable WebKit blur for Safari */
 .cdk-overlay-backdrop {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -20,4 +20,69 @@ select:disabled,
 option:disabled,
 input:disabled {
   cursor: default;
+}
+
+/* Snackbar notification styles - Multiple approaches for compatibility */
+.success-snackbar,
+.mat-mdc-snack-bar-container.success-snackbar,
+.mat-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #4caf50 !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  background-color: #4caf50 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.success-snackbar .mat-mdc-snack-bar-label,
+.success-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+.error-snackbar,
+.mat-mdc-snack-bar-container.error-snackbar,
+.mat-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #f44336 !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  background-color: #f44336 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.error-snackbar .mat-mdc-snack-bar-label,
+.error-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+.info-snackbar,
+.mat-mdc-snack-bar-container.info-snackbar,
+.mat-snack-bar-container.info-snackbar {
+  --mdc-snackbar-container-color: #2196f3 !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  background-color: #2196f3 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.info-snackbar .mat-mdc-snack-bar-label,
+.info-snackbar .mat-mdc-button {
+  color: #ffffff !important;
+}
+
+.warning-snackbar,
+.mat-mdc-snack-bar-container.warning-snackbar,
+.mat-snack-bar-container.warning-snackbar {
+  --mdc-snackbar-container-color: #ff9800 !important;
+  --mat-snack-bar-button-color: #ffffff !important;
+  --mdc-snackbar-supporting-text-color: #ffffff !important;
+  background-color: #ff9800 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.warning-snackbar .mat-mdc-snack-bar-label,
+.warning-snackbar .mat-mdc-button {
+  color: #ffffff !important;
 }

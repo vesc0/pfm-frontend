@@ -33,16 +33,22 @@ export class AnalyticsTreemapComponent implements OnInit {
   loading = true;
   hasData = false;
   currentCatCode?: string;
-
   startDate = new FormControl<string | null>(null);
   endDate = new FormControl<string | null>(null);
-
   private allCategories: Category[] = [];
   showFilters = true;
 
   constructor(private analytics: AnalyticsService, private categoriesSvc: CategoriesService) { }
 
   ngOnInit(): void {
+    // Set default dates: one month back to today
+    const today = new Date();
+    const oneMonthBack = new Date();
+    oneMonthBack.setMonth(today.getMonth() - 1);
+
+    this.startDate.setValue(oneMonthBack.toISOString().split('T')[0]);
+    this.endDate.setValue(today.toISOString().split('T')[0]);
+
     this.categoriesSvc.getCategories().subscribe(cats => {
       this.allCategories = cats;
       this.load();
@@ -83,8 +89,13 @@ export class AnalyticsTreemapComponent implements OnInit {
   }
 
   onFilterClear(): void {
-    this.startDate.setValue(null);
-    this.endDate.setValue(null);
+    // Reset to default dates: one month back to today
+    const today = new Date();
+    const oneMonthBack = new Date();
+    oneMonthBack.setMonth(today.getMonth() - 1);
+
+    this.startDate.setValue(oneMonthBack.toISOString().split('T')[0]);
+    this.endDate.setValue(today.toISOString().split('T')[0]);
     this.load(this.currentCatCode);
   }
 

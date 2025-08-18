@@ -15,8 +15,8 @@
     <!-- Bulk controls -->
     <div *ngIf="showBulkCategorize" class="flex items-center gap-3">
       <span class="font-semibold text-xs text-sky-500">
-        {{ selectedCount() === 0 ? 'Please select transactions' : 'Selected ' + selectedCount() + ' transaction' +
-        (selectedCount() > 1 ? 's' : '') }}
+        {{ selectedCount() === 0 ? 'Please select transactions.' : 'Selected ' + selectedCount() + ' transaction' +
+        (selectedCount() > 1 ? 's.' : '.') }}
       </span>
       <button (click)="onBulkProceed()" [disabled]="!anySelected()"
         class="bg-sky-500 text-white px-4 py-1 rounded-lg text-xs font-medium hover:bg-sky-600 disabled:opacity-50">
@@ -65,18 +65,16 @@
         <div class="mt-2">
           <ng-container *ngIf="tx.splits.length > 0; else showCategory">
             <div class="flex flex-wrap gap-2">
-              <span *ngFor="let sp of tx.splits"
-                class="inline-block bg-cyan-500 text-white px-2 py-1 rounded-sm text-xs">
+              <span *ngFor="let sp of tx.splits" (click)="openSplitDialog(tx)" class="tag-label">
                 {{ sp.category?.name || sp.catCode }}
-                {{ sp.amount | number:'1.2-2' }}
+                ({{ sp.amount | number:'1.2-2' }})
               </span>
             </div>
           </ng-container>
 
           <ng-template #showCategory>
             <ng-container *ngIf="tx.category; else addCat">
-              <span (click)="openCategorizeDialog(tx)"
-                class="inline-block bg-sky-500 text-white px-2 py-1 rounded-sm text-xs cursor-pointer">
+              <span (click)="openCategorizeDialog(tx)" class="tag-label">
                 {{ tx.category.name }}
               </span>
             </ng-container>
@@ -108,7 +106,7 @@
     <!-- Paginator -->
     <div *ngIf="totalItems > 1" class="flex justify-center mt-4">
       <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[10,20,50]"
-        (page)="onPageChange($event)">
+        [showFirstLastButtons]="true" (page)="onPageChange($event)" class="rounded-lg">
       </mat-paginator>
     </div>
 
