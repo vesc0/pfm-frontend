@@ -52,12 +52,30 @@ docker-compose up --build
 
 ## Screenshots
 
-![transactions-list](screenshots/transactions-list.png)
+<p align="center">
+  <img src="screenshots/transactions-list.png" alt="transactions-list">
+</p>
+
 ---
-![transactions-categorization](screenshots/transactions-categorization.png)
+
+<p align="center">
+  <img src="screenshots/transactions-categorization.png" alt="transactions-categorization">
+</p>
+
 ---
-![transactions-split](screenshots/transactions-split.png)
+
+<p align="center">
+  <img src="screenshots/mobile-transactions-multiple-categorization.png" alt="mobile-transactions-multiple-categorization">
+</p>
+
 ---
-![mobile-transactions-multiple-categorization](screenshots/mobile-transactions-multiple-categorization.png)
+
+<p align="center">
+  <img src="screenshots/transactions-split.png" alt="transactions-split">
+</p>
+
 ---
-![analytics-treemap](screenshots/analytics-treemap.png)
+
+<p align="center">
+  <img src="screenshots/analytics-treemap.png" alt="analytics-treemap">
+</p>
