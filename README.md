@@ -1,59 +1,43 @@
-# PfmFrontend
+# Personal Finance Management Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.7.
+A modern Angular application for managing personal finances with transaction tracking, categorization, and analytics visualization.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Transaction Management**: View, filter, categorize, and split financial transactions
+- **Analytics Dashboard**: Interactive treemap visualizations using ECharts
+- **Responsive Design**: Built with Angular Material and Tailwind CSS
 
-```bash
-ng serve
-```
+## Tech Stack
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+- **Framework**: Angular 19
+- **Language**: TypeScript
+- **UI Components**: Angular Material
+- **Styling**: Tailwind CSS, SCSS
+- **Charts**: ngx-echarts
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Quick Start
 
 ```bash
-ng generate --help
+# Install dependencies
+npm install
+
+# Start development server
+npm start
 ```
 
-## Building
+Open `http://localhost:4200` in your browser.
 
-To build the project run:
+## Available Scripts
+
+- `npm start` - Start development server
+- `npm run build` - Build for production
+- `npm test` - Run unit tests
+- `npm run watch` - Build in watch mode
+
+## Docker Support
 
 ```bash
-ng build
+# Build and run with Docker Compose
+docker-compose up --build
 ```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
