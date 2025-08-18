@@ -2,6 +2,14 @@
 
 A modern Angular application for managing personal finances with transaction tracking, categorization, and analytics visualization.
 
+## Contents
+
+- [Features](#features) 
+- [Tech Stack](#tech-stack)  
+- [Getting Started](#getting-started)
+- [Docker Support](#docker-support)   
+- [Screenshots](#screenshots)  
+
 ## Features
 
 - **Transaction Management**: View, filter, categorize, and split financial transactions
@@ -16,7 +24,7 @@ A modern Angular application for managing personal finances with transaction tra
 - **Styling**: Tailwind CSS, SCSS
 - **Charts**: ngx-echarts
 
-## Quick Start
+## Getting Started
 
 ```bash
 # Install dependencies
@@ -28,7 +36,7 @@ npm start
 
 Open `http://localhost:4200` in your browser.
 
-## Available Scripts
+### Available Scripts
 
 - `npm start` - Start development server
 - `npm run build` - Build for production
@@ -41,3 +49,15 @@ Open `http://localhost:4200` in your browser.
 # Build and run with Docker Compose
 docker-compose up --build
 ```
+
+## Screenshots
+
+![transactions-list](screenshots/transactions-list.png)
+---
+![transactions-categorization](screenshots/transactions-categorization.png)
+---
+![transactions-split](screenshots/transactions-split.png)
+---
+![mobile-transactions-multiple-categorization](screenshots/mobile-transactions-multiple-categorization.png)
+---
+![analytics-treemap](screenshots/analytics-treemap.png)
