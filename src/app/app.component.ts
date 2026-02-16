@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CatRulesDialog } from './transactions/cat-rules-dialog/cat-rules-dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,15 @@ import { MatButtonModule } from '@angular/material/button';
 export class AppComponent {
   isSidebarOpen = false;
 
+  constructor(
+    private dialog: MatDialog
+  ) {}
+
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  openCatRulesDialog(): void {
+    this.dialog.open(CatRulesDialog);
   }
 }
