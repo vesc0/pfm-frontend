@@ -1,10 +1,17 @@
 <!-- Header -->
 <div class="bg-sky-500 text-center text-white px-6 py-4 rounded-t-lg">
-  <h2 class="text-lg font-medium">Upload Categorization Rules</h2>
-  <p class="text-sm text-gray-200 mt-1">Upload a YAML file with your categorization rules</p>
+  <h2 class="text-lg font-medium">Transaction Auto-Categorization</h2>
+  <p class="text-sm text-gray-200 mt-1">Use default rules or upload a YAML file with your categorization rules.</p>
 </div>
 
 <mat-dialog-content class="bg-white px-6 py-4 space-y-4">
+  <div class="flex justify-between items-center">
+    <h3 class="text-sm font-medium text-gray-700">Auto-Categorize using predefined rules</h3>
+    <button (click)="autoCategorize()"
+      class="bg-sky-500 text-white px-4 py-1 rounded-lg text-xs font-medium hover:bg-sky-600">
+      Auto-Categorize
+    </button>
+  </div>
   <!-- File upload section -->
   <div class="space-y-3">
     <label for="catRules" class="block text-sm font-medium text-gray-700">

@@ -39,7 +39,11 @@ export class TransactionsListComponent implements OnInit {
     private transactionsService: TransactionsService,
     private categoriesService: CategoriesService,
     private dialog: MatDialog
-  ) { }
+  ) {
+    this.transactionsService.refresh$.subscribe(() => {
+      this.fetchTransactions();
+    });
+  }
 
   ngOnInit(): void {
     this.transactionKinds = Object.keys(this.kindLabels);

@@ -47,12 +47,25 @@ export class CatRulesDialog {
         this.transactionService.autoCategorizeUpload(formData).subscribe({
             next: (response) => {
                 this.notificationService.showSuccess('Categorization rules uploaded successfully!');
+                this.transactionService.triggerRefresh(); // Refresh transactions to show updated transactions                
                 this.dialogRef.close();
-                //window.location.reload(); // Refresh the page to show updated transactions
             },
             error: (error) => {
                 this.uploading = false;
                 this.notificationService.handleHttpError(error, 'Failed to upload categorization rules');
+            }
+        });
+    }
+
+    autoCategorize() {
+        this.transactionService.autoCategorize().subscribe({
+            next: (response) => {
+                this.notificationService.showSuccess('Auto-categorization completed successfully!');
+                this.transactionService.triggerRefresh(); // Refresh transactions to show updated transactions
+                this.dialogRef.close();
+            },
+            error: (error) => {
+                this.notificationService.handleHttpError(error, 'Failed to auto-categorize transactions');
             }
         });
     }

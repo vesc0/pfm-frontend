@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Transaction, TransactionFilters, TransactionsResponse, Split, SplitRequest } from '../models/transaction.model';
 import { CategoriesService } from './categories.service';
@@ -10,6 +10,8 @@ import { environment } from '../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class TransactionsService {
   private apiUrl = environment.apiUrl;
+  private refreshTrigger = new Subject<void>();
+  refresh$ = this.refreshTrigger.asObservable();
 
   constructor(private http: HttpClient, private categoriesService: CategoriesService) { }
 
@@ -101,8 +103,16 @@ export class TransactionsService {
     }));
   }
 
+  autoCategorize(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/transactions/auto-categorize`, {});
+  }
+
   autoCategorizeUpload(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/transactions/auto-categorize/upload`, formData);
+  }
+
+  triggerRefresh() {
+    this.refreshTrigger.next();
   }
 
 }
