@@ -79,3 +79,9 @@ docker-compose up --build
 <p align="center">
   <img src="screenshots/analytics-treemap.png" alt="analytics-treemap">
 </p>
+
+---
+
+<p align="center">
+  <img src="screenshots/auto-categorization.png" alt="auto-categorization">
+</p>
